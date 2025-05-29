@@ -23,8 +23,7 @@ string getPassword() {
     cout << endl;
     return password;
 }
- 
-// Simple email validation
+
 bool isValidEmail(const string& email) {
     const regex pattern("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
     return regex_match(email, pattern);
