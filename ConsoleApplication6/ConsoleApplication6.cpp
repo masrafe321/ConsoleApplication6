@@ -28,8 +28,7 @@ bool isValidEmail(const string& email) {
     const regex pattern("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
     return regex_match(email, pattern);
 }
- 
-// Password strength validation
+
 bool isValidPassword(const string& password) {
     return password.length() >= 6; 
 }
@@ -54,8 +53,7 @@ void registerCustomer() {
             cout << "Password must be at least 6 characters long. Try again.\n";
         }
     } while (!isValidPassword(password));
- 
-    // Save to file
+
     ofstream file("customers.txt", ios::app);
     if (file.is_open()) {
         file << name << "," << email << "," << password << endl;
