@@ -1,32 +1,74 @@
-// ConsoleApplication6.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-// C++ Program to calculate the sum of first N natural numbers using recursion
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <regex>
+#include <conio.h>  
+ 
 using namespace std;
-
-int sum(int);
-
-int main()
-{
-	int n = 5;
-	int result = sum(n);
-	cout << "sum=" << result << endl;
-	return 0;
+string getPassword() {
+    string password;
+    char ch;
+    cout << "Enter password: ";
+    while ((ch = _getch()) != '\r') { 
+        if (ch == '\b') { 
+            if (!password.empty()) {
+                cout << "\b \b";
+                password.pop_back();
+            }
+        } else {
+            password += ch;
+            cout << '*';
+        }
+    }
+    cout << endl;
+    return password;
 }
-int sum(int n) {
-	if (n == 0) {
-		return 0;
-	}
-	return n + sum(n - 1);
+ 
+// Simple email validation
+bool isValidEmail(const string& email) {
+    const regex pattern("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$");
+    return regex_match(email, pattern);
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+ 
+// Password strength validation
+bool isValidPassword(const string& password) {
+    return password.length() >= 6; 
+}
+void registerCustomer() {
+    string name, email, password;
+ 
+    cout << "=== Cyber Cafe Registration ===\n";
+    cout << "Enter your name: ";
+    getline(cin, name);
+ 
+    do {
+        cout << "Enter your email: ";
+        getline(cin, email);
+        if (!isValidEmail(email)) {
+            cout << "Invalid email format. Please try again.\n";
+        }
+    } while (!isValidEmail(email));
+ 
+    do {
+        password = getPassword();
+        if (!isValidPassword(password)) {
+            cout << "Password must be at least 6 characters long. Try again.\n";
+        }
+    } while (!isValidPassword(password));
+ 
+    // Save to file
+    ofstream file("customers.txt", ios::app);
+    if (file.is_open()) {
+        file << name << "," << email << "," << password << endl;
+        file.close();
+        cout << "Registration successful!\n";
+    } else {
+        cerr << "Error saving registration. Try again later.\n";
+    }
+}
+ 
+int main() {
+    registerCustomer();
+    return 0;
+}
+ 
