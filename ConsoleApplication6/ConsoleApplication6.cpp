@@ -66,6 +66,7 @@ void registerCustomer() {
  
 int main() {
     registerCustomer();
+    cout << "This is test" << endl;
     return 0;
 }
  
