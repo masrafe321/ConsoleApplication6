@@ -4,6 +4,7 @@
 #include <regex>
 #include <unordered_map>
 using namespace std;
+
 struct User {
     string name;
     string email;
@@ -15,9 +16,10 @@ struct User {
 vector<User> users;
 unordered_map<string, double> pricing = { {"print", 0.10}, {"scan", 0.05} };
 
-bool validate Password(const string& password) {
-  
-    return regex_match(password, regex("^(?=.*[A-Z])(?=.*\\d).{8,}$"));
+// Validate password: 8+ chars, 1 uppercase, 1 digit
+bool validatePassword(string input) {
+    regex pattern("^(?=.*[A-Z])(?=.*\\d).{8,}$");
+    return regex_match(input, pattern);
 }
 
 void registerUser() {
@@ -26,9 +28,13 @@ void registerUser() {
     cin >> user.name;
     cout << "Enter email: ";
     cin >> user.email;
+
     do {
         cout << "Enter strong password (min 8 chars, 1 uppercase, 1 digit): ";
         cin >> user.password;
+        if (!validatePassword(user.password)) {
+            cout << "Invalid password. Try again.\n";
+        }
     } while (!validatePassword(user.password));
 
     user.isAdmin = false;
@@ -60,6 +66,14 @@ void scanDocuments() {
     cout << "Scanned " << pages << " pages. Total cost: $" << cost << endl;
 }
 
+void printDocuments() {
+    int pages;
+    cout << "Enter number of pages to print: ";
+    cin >> pages;
+    double cost = pages * pricing["print"];
+    cout << "Printed " << pages << " pages. Total cost: $" << cost << endl;
+}
+
 void adminPanel(int userIndex) {
     int choice;
     do {
@@ -74,10 +88,15 @@ void adminPanel(int userIndex) {
             double price;
             cout << "Enter service name (print/scan): ";
             cin >> service;
-            cout << "Enter new price per page: ";
-            cin >> price;
-            pricing[service] = price;
-            cout << service << " price updated to $" << price << endl;
+            if (pricing.find(service) != pricing.end()) {
+                cout << "Enter new price per page: ";
+                cin >> price;
+                pricing[service] = price;
+                cout << service << " price updated to $" << price << endl;
+            }
+            else {
+                cout << "Invalid service.\n";
+            }
         }
         else if (choice == 2) {
             string targetEmail;
@@ -94,14 +113,17 @@ void adminPanel(int userIndex) {
 }
 
 int main() {
- 
-    users.push_back({"Admin", "admin@sys.com", "Admin123", true, true});
+    // Preload admin user
+    users.push_back({ "Admin", "admin@sys.com", "Admin123", true, true });
 
     int choice;
     string currentEmail;
+
     do {
-        cout << "\n1. Register\n2. Login\n3. Exit\nChoice: ";
+        cout << "\n--- Skyline Cyber Café ---\n";
+        cout << "1. Register\n2. Login\n3. Exit\nChoice: ";
         cin >> choice;
+
         if (choice == 1) {
             registerUser();
         }
@@ -110,14 +132,24 @@ int main() {
             if (userIndex != -1) {
                 if (users[userIndex].isAdmin) {
                     adminPanel(userIndex);
-                } else {
-                    scanDocuments();
                 }
-            } else {
+                else {
+                    int action;
+                    do {
+                        cout << "\n1. Print Documents\n2. Scan Documents\n3. Logout\nChoice: ";
+                        cin >> action;
+                        if (action == 1) printDocuments();
+                        if (action == 2) scanDocuments();
+                    } while (action != 3);
+                }
+            }
+            else {
                 cout << "Invalid login or user inactive.\n";
             }
         }
+
     } while (choice != 3);
 
+    cout << "Goodbye!\n";
     return 0;
 }
